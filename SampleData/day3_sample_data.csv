@@ -1,0 +1,13 @@
+id,name,age,salary
+1,John,25,50000
+2,Jane,30,60000
+,NoID,22,45000
+4,,28,52000
+5,Alice,not_a_number,55000
+6,Bob,35,not_available
+7,Charlie,28,48000
+8,David,32,65000
+9,Eve,29,70000
+10,Frank,40,80000
+11,Grace, ,75000
+12,Hank,33,90000
