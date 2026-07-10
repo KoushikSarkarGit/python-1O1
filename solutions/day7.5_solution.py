@@ -1,6 +1,18 @@
 """
 Day 8: Object-Oriented Programming (OOP) in Python
 Project: Build a Complete Library Management System - SOLUTION
+
+Exercise order:
+1. Basics
+2. Inheritance & Polymorphism
+3. Multiple Inheritance & Mixins
+4. Magic Methods & Operator Overloading
+5. Custom Iterator
+6. Context Manager
+7. Properties, Data Classes, and Patterns
+8. Advanced Topics
+9. Diamond Inheritance & MRO
+10. Custom Exceptions
 """
 
 from abc import ABC, abstractmethod
