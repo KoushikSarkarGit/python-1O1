@@ -43,7 +43,7 @@ class Book:
     
     def display_info(self) -> str:
         """Instance method to display book info."""
-        return f"Book: '{self.title}' by {self.author} (ISBN: {self.isbn}, Copies: {self.copies})"
+        return f"Book: '{self.title}' by {self.author} (ISBN: {self.isbn}, Copies sold: {self.copies})"
     
     @classmethod
     def from_string(cls, book_str: str) -> 'Book':
@@ -61,7 +61,6 @@ class Book:
     @staticmethod
     def is_valid_isbn(isbn: str) -> bool:
         """Static method to validate ISBN-13 format."""
-        # Remove hyphens and spaces
         cleaned = re.sub(r'[-\s]', '', isbn)
         # Check if it's 13 digits
         if not re.match(r'^\d{13}$', cleaned):
@@ -78,7 +77,7 @@ class Book:
 
 
 class Member:
-    """Member class demonstrating encapsulation with private/protected attributes."""
+    """Member class demonstrating encapsulation with private/protected attributes. Also ading getter setters with property decoraters"""
     
     def __init__(self, member_id: str, name: str, email: str):
         self.__member_id = member_id  # Private
@@ -136,92 +135,90 @@ class LibraryItem(ABC):
     """Abstract base class for all library items."""
     
     def __init__(self, title: str, item_id: str):
-        self.title = title
-        self.item_id = item_id
-        self._is_borrowed = False
-    
+        self.__title  =title
+        self.__item_id = item_id
+        self.__is_borrowed = False
+        self.__loan_period = 14
+        self.__late_fee_per_day = 10.00
+
     @abstractmethod
     def get_loan_period(self) -> int:
         """Return loan period in days."""
-        pass
+        return self.__loan_period
     
     @abstractmethod
     def get_late_fee_per_day(self) -> float:
         """Return late fee per day."""
-        pass
+        return self.get_late_fee_per_day
     
     def is_available(self) -> bool:
-        return not self._is_borrowed
+        # TODO: Return if item is not borrowed
+        return self.__is_borrowed
     
     def borrow(self):
-        if self._is_borrowed:
-            raise Exception(f"Item '{self.title}' is already borrowed")
-        self._is_borrowed = True
+        # TODO: Mark as borrowed, raise exception if already borrowed
+        if self.__is_borrowed:
+            raise Exception("This Book is already borrowed by someone else")
+        else:
+            self.__is_borrowed = True
     
     def return_item(self):
-        self._is_borrowed = False
+
+        self.__is_borrowed = False
 
 
 class PhysicalBook(LibraryItem):
     """Physical book with specific loan period and fees."""
     
     def __init__(self, title: str, item_id: str, author: str, shelf_location: str):
-        super().__init__(title, item_id)
-        self.author = author
-        self.shelf_location = shelf_location
+        # TODO: Call super().__init__() and store author and shelf_location
+        pass
     
     def get_loan_period(self) -> int:
-        return 14
+        # TODO: Return 14 days for physical books
+        pass
     
     def get_late_fee_per_day(self) -> float:
-        return 0.50
-    
-    def __str__(self):
-        return f"PhysicalBook('{self.title}' by {self.author}, Shelf: {self.shelf_location})"
+        # TODO: Return $0.50 per day
+        pass
 
 
 class DigitalBook(LibraryItem):
     """Digital book with different loan period and fees."""
     
     def __init__(self, title: str, item_id: str, file_size: str, download_url: str):
-        super().__init__(title, item_id)
-        self.file_size = file_size
-        self.download_url = download_url
+        # TODO: Call super().__init__() and store file_size and download_url
+        pass
     
     def get_loan_period(self) -> int:
-        return 7
+        # TODO: Return 7 days for digital books
+        pass
     
     def get_late_fee_per_day(self) -> float:
-        return 0.00  # No late fee for digital books
-    
-    def __str__(self):
-        return f"DigitalBook('{self.title}', Size: {self.file_size})"
+        # TODO: Return 0.00 (no late fee for digital)
+        pass
 
 
 class AudioBook(LibraryItem):
     """Audio book with specific properties."""
     
     def __init__(self, title: str, item_id: str, duration_minutes: int, narrator: str):
-        super().__init__(title, item_id)
-        self.duration_minutes = duration_minutes
-        self.narrator = narrator
+        # TODO: Call super().__init__() and store duration_minutes and narrator
+        pass
     
     def get_loan_period(self) -> int:
-        return 21
+        # TODO: Return 21 days for audio books
+        pass
     
     def get_late_fee_per_day(self) -> float:
-        return 0.25
-    
-    def __str__(self):
-        return f"AudioBook('{self.title}' narrated by {self.narrator}, {self.duration_minutes} min)"
+        # TODO: Return $0.25 per day
+        pass
 
 
 def print_loan_info(item: LibraryItem):
     """Demonstrate duck typing - works with any LibraryItem."""
-    print(f"  Item: {item.title}")
-    print(f"  Loan Period: {item.get_loan_period()} days")
-    print(f"  Late Fee: ${item.get_late_fee_per_day():.2f}/day")
-    print(f"  Available: {item.is_available()}")
+    # TODO: Print item title, loan period, and late fee
+    pass
 
 
 # =============================================================================
@@ -232,44 +229,50 @@ class SearchableMixin:
     """Mixin providing search functionality."""
     
     def search_by_title(self, query: str) -> bool:
-        return query.lower() in self.title.lower()
+        # TODO: Return True if query is in title (case insensitive)
+        pass
     
     def search_by_author(self, query: str) -> bool:
-        author = getattr(self, 'author', getattr(self, 'narrator', ''))
-        return query.lower() in author.lower() if author else False
+        # TODO: Return True if query is in author (case insensitive)
+        # TODO: Handle case where author attribute doesn't exist
+        pass
 
 
 class SerializableMixin:
     """Mixin providing serialization functionality."""
     
     def to_dict(self) -> Dict[str, Any]:
-        return {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
+        # TODO: Return dictionary representation of object
+        pass
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]):
-        return cls(**data)
+        # TODO: Create instance from dictionary
+        pass
 
 
 class LoggableMixin:
     """Mixin providing logging functionality."""
     
     def log_action(self, action: str):
-        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        print(f"  [{timestamp}] {self.__class__.__name__}: {action}")
+        # TODO: Print log message with timestamp, class name, and action
+        pass
 
 
 class EnhancedLibraryItem(LibraryItem, SearchableMixin, SerializableMixin, LoggableMixin):
     """Library item with all mixins applied."""
     
     def __init__(self, title: str, item_id: str, author: str = "Unknown"):
-        super().__init__(title, item_id)
-        self.author = author
+        # TODO: Call super().__init__() and set author
+        pass
     
     def get_loan_period(self) -> int:
-        return 14
+        # TODO: Return loan period
+        pass
     
     def get_late_fee_per_day(self) -> float:
-        return 0.50
+        # TODO: Return late fee
+        pass
 
 
 # =============================================================================
@@ -286,63 +289,52 @@ class MagicBook:
         self.copies = copies
     
     def __str__(self):
-        return f'MagicBook: "{self.title}" by {self.author}'
+        # TODO: Return user-friendly string representation
+        pass
     
     def __repr__(self):
-        return f'MagicBook(title="{self.title}", author="{self.author}", isbn="{self.isbn}", copies={self.copies})'
+        # TODO: Return developer string representation
+        pass
     
     def __eq__(self, other):
-        if not isinstance(other, MagicBook):
-            return NotImplemented
-        return self.isbn == other.isbn
+        # TODO: Compare by ISBN
+        pass
     
     def __lt__(self, other):
-        if not isinstance(other, MagicBook):
-            return NotImplemented
-        return self.title < other.title
+        # TODO: Compare by title for sorting
+        pass
     
     def __hash__(self):
-        return hash(self.isbn)
+        # TODO: Make book hashable by ISBN
+        pass
     
     def __len__(self):
-        return self.copies
+        # TODO: Return number of copies
+        pass
     
     def __bool__(self):
-        return self.copies > 0
+        # TODO: True if copies > 0
+        pass
     
     def __contains__(self, substring):
-        return substring.lower() in self.author.lower()
+        # TODO: Check if substring is in author name
+        pass
     
     def __add__(self, other):
-        if not isinstance(other, MagicBook):
-            return NotImplemented
-        if self.isbn != other.isbn:
-            raise ValueError("Cannot add books with different ISBNs")
-        return MagicBook(self.title, self.author, self.isbn, self.copies + other.copies)
+        # TODO: Combine two books with same ISBN (add copies)
+        pass
     
     def __getitem__(self, index):
-        if index < 0 or index >= self.copies:
-            raise IndexError("Copy index out of range")
-        return {
-            'copy_number': index + 1,
-            'isbn': self.isbn,
-            'title': self.title,
-            'status': 'available'
-        }
+        # TODO: Access copy info by index
+        pass
     
     def __iter__(self):
-        for i in range(self.copies):
-            yield self.__getitem__(i)
+        # TODO: Iterate over copies
+        pass
     
     def __call__(self):
-        """Returns next available copy info."""
-        if self.copies > 0:
-            return {
-                'copy_number': 1,
-                'isbn': self.isbn,
-                'title': self.title
-            }
-        return None
+        # TODO: Make book callable - returns next available copy info
+        pass
 
 
 # =============================================================================
@@ -353,28 +345,28 @@ class BookCollection:
     """Custom iterator class for book collections."""
     
     def __init__(self, books: List[Any] = None):
-        self._books = books if books is not None else []
-        self._index = 0
+        # TODO: Initialize books list and index
+        pass
     
     def __iter__(self):
-        self._index = 0
-        return self
+        # TODO: Reset index and return self
+        pass
     
     def __next__(self):
-        if self._index >= len(self._books):
-            raise StopIteration
-        book = self._books[self._index]
-        self._index += 1
-        return book
+        # TODO: Return next book or raise StopIteration
+        pass
     
     def __len__(self):
-        return len(self._books)
+        # TODO: Return number of books
+        pass
     
     def add_book(self, book):
-        self._books.append(book)
+        # TODO: Add book to collection
+        pass
     
     def reset(self):
-        self._index = 0
+        # TODO: Reset iterator to beginning
+        pass
 
 
 # =============================================================================
@@ -385,29 +377,18 @@ class LoanSession:
     """Context manager for book borrowing sessions."""
     
     def __init__(self, item: LibraryItem, member: 'Member'):
-        self.item = item
-        self.member = member
-        self.start_time = None
-        self.end_time = None
+        # TODO: Initialize item, member, start_time
+        pass
     
     def __enter__(self):
-        self.start_time = datetime.now()
-        self.item.borrow()
-        print(f"  [LOAN] '{self.item.title}' borrowed by {self.member.member_id} at {self.start_time}")
-        return self
+        # TODO: Mark item as borrowed, log action, return self
+        pass
     
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.end_time = datetime.now()
-        self.item.return_item()
-        duration = self.end_time - self.start_time
-        
-        if exc_type is None:
-            print(f"  [LOAN] '{self.item.title}' returned normally (duration: {duration})")
-        else:
-            print(f"  [ERROR] Exception occurred: {exc_val}")
-            print(f"  [LOAN] '{self.item.title}' returned due to exception (duration: {duration})")
-        
-        return False  # Don't suppress exceptions
+        # TODO: If no exception, return item
+        # TODO: If exception, log error but still return item
+        # TODO: Log action and return False (don't suppress exception)
+        pass
 
 
 # =============================================================================
@@ -417,33 +398,17 @@ class LoanSession:
 class Temperature:
     """Class demonstrating properties with validation."""
     
-    ABSOLUTE_ZERO = -273.15
-    
     def __init__(self, celsius: float):
-        self.celsius = celsius  # This will use the setter
+        # TODO: Use private attribute _celsius
+        # TODO: Use setter for validation
+        pass
     
-    @property
-    def celsius(self) -> float:
-        return self._celsius
+    # TODO: @property celsius (getter)
+    # TODO: @celsius.setter (validate >= -273.15, raise ValueError if below)
+    # TODO: @celsius.deleter (log deletion)
     
-    @celsius.setter
-    def celsius(self, value: float):
-        if value < self.ABSOLUTE_ZERO:
-            raise ValueError(f"Temperature cannot be below absolute zero ({self.ABSOLUTE_ZERO}°C)")
-        self._celsius = value
-    
-    @celsius.deleter
-    def celsius(self):
-        print(f"  [DELETE] Deleting temperature value: {self._celsius}°C")
-        del self._celsius
-    
-    @property
-    def fahrenheit(self) -> float:
-        return (self._celsius * 9/5) + 32
-    
-    @fahrenheit.setter
-    def fahrenheit(self, value: float):
-        self.celsius = (value - 32) * 5/9
+    # TODO: @property fahrenheit (computed from celsius)
+    # TODO: @fahrenheit.setter (convert to celsius and set)
 
 
 @dataclass
@@ -455,12 +420,8 @@ class MemberData:
     age: int = 18
     borrowed_books: List[str] = field(default_factory=list)
     
-    def __post_init__(self):
-        if self.age < 0:
-            raise ValueError("Age cannot be negative")
-        if not self.name or len(self.name) < 2:
-            raise ValueError("Name must be at least 2 characters")
-        print(f"  [POST_INIT] MemberData created: {self.name}")
+    # TODO: Add __post_init__ for validation
+    pass
 
 
 @dataclass(frozen=True)
@@ -469,6 +430,7 @@ class FrozenMember:
     name: str
     email: str
     member_id: str
+    # TODO: Try frozen=True version
 
 
 class SingletonLibrary:
@@ -478,35 +440,16 @@ class SingletonLibrary:
     _lock = threading.Lock()
     
     def __new__(cls, *args, **kwargs):
-        with cls._lock:
-            if cls._instance is None:
-                cls._instance = super().__new__(cls)
-        return cls._instance
+        # TODO: Use lock for thread safety
+        # TODO: Create instance only if _instance is None
+        # TODO: Return the single instance
+        pass
     
     def __init__(self, name: str = "Central Library"):
-        if not hasattr(self, '_initialized'):
-            self.name = name
-            self._books: List[Any] = []
-            self._members: List[Any] = []
-            self._initialized = True
+        # TODO: Initialize only once (use hasattr check)
+        pass
     
-    def add_book(self, book):
-        self._books.append(book)
-        print(f"  Added: {book}")
-    
-    def remove_book(self, book):
-        if book in self._books:
-            self._books.remove(book)
-            print(f"  Removed: {book}")
-    
-    def find_book(self, title: str):
-        for book in self._books:
-            if hasattr(book, 'title') and title.lower() in book.title.lower():
-                return book
-        return None
-    
-    def list_books(self):
-        return self._books
+    # TODO: Add methods: add_book, remove_book, find_book, list_books
 
 
 class MemberFactory:
@@ -514,15 +457,9 @@ class MemberFactory:
     
     @staticmethod
     def create_member(member_type: str, name: str, email: str, member_id: str):
-        member_type = member_type.lower()
-        if member_type == 'student':
-            return StudentMember(name, email, member_id, f"S{member_id}")
-        elif member_type == 'faculty':
-            return FacultyMember(name, email, member_id, "General")
-        elif member_type == 'premium':
-            return PremiumMember(name, email, member_id, "Gold")
-        else:
-            raise ValueError(f"Unknown member type: {member_type}")
+        # TODO: Return StudentMember, FacultyMember, or PremiumMember
+        # TODO: Raise ValueError for invalid type
+        pass
 
 
 class StudentMember(Member):
@@ -530,11 +467,8 @@ class StudentMember(Member):
     borrow_limit = 3
     
     def __init__(self, name: str, email: str, member_id: str, student_id: str):
-        super().__init__(member_id, name, email)
-        self.student_id = student_id
-    
-    def __str__(self):
-        return f"StudentMember({self.name}, {self.student_id}, limit={self.borrow_limit})"
+        # TODO: Call super().__init__() and set student_id
+        pass
 
 
 class FacultyMember(Member):
@@ -542,11 +476,8 @@ class FacultyMember(Member):
     borrow_limit = 10
     
     def __init__(self, name: str, email: str, member_id: str, department: str):
-        super().__init__(member_id, name, email)
-        self.department = department
-    
-    def __str__(self):
-        return f"FacultyMember({self.name}, {self.department}, limit={self.borrow_limit})"
+        # TODO: Initialize faculty member
+        pass
 
 
 class PremiumMember(Member):
@@ -554,11 +485,8 @@ class PremiumMember(Member):
     borrow_limit = 20
     
     def __init__(self, name: str, email: str, member_id: str, subscription_tier: str):
-        super().__init__(member_id, name, email)
-        self.subscription_tier = subscription_tier
-    
-    def __str__(self):
-        return f"PremiumMember({self.name}, {self.subscription_tier}, limit={self.borrow_limit})"
+        # TODO: Initialize premium member
+        pass
 
 
 # =============================================================================
@@ -569,27 +497,22 @@ class ValidatedString:
     """Descriptor for validated string fields."""
     
     def __init__(self, min_length: int = 1, max_length: int = 100):
-        self.min_length = min_length
-        self.max_length = max_length
-        self.name = None
+        # TODO: Initialize min_length, max_length, name (will be set by __set_name__)
+        pass
     
     def __set_name__(self, owner, name):
-        self.name = name
-        self.storage_name = f'_validated_{name}'
+        # TODO: Store attribute name (prefix with _ for private storage)
+        pass
     
     def __get__(self, obj, objtype=None):
-        if obj is None:
-            return self
-        return getattr(obj, self.storage_name, None)
+        # TODO: Return value from obj.__dict__ or None
+        pass
     
     def __set__(self, obj, value):
-        if not isinstance(value, str):
-            raise ValueError(f"{self.name} must be a string, got {type(value).__name__}")
-        if len(value) < self.min_length:
-            raise ValueError(f"{self.name} must be at least {self.min_length} characters")
-        if len(value) > self.max_length:
-            raise ValueError(f"{self.name} must be at most {self.max_length} characters")
-        setattr(obj, self.storage_name, value)
+        # TODO: Validate: must be string, non-empty, within length limits
+        # TODO: Raise ValueError if validation fails
+        # TODO: Store in obj.__dict__
+        pass
 
 
 class ValidatedMember:
@@ -598,12 +521,8 @@ class ValidatedMember:
     email = ValidatedString(min_length=5, max_length=100)
     
     def __init__(self, name: str, email: str, member_id: str):
-        self.name = name
-        self.email = email
-        self.member_id = member_id
-    
-    def __str__(self):
-        return f"ValidatedMember(name={self.name}, email={self.email}, id={self.member_id})"
+        # TODO: Set name, email, and member_id
+        pass
 
 
 class SingletonMeta(type):
@@ -613,26 +532,26 @@ class SingletonMeta(type):
     _lock = threading.Lock()
     
     def __call__(cls, *args, **kwargs):
-        with cls._lock:
-            if cls not in cls._instances:
-                cls._instances[cls] = super().__call__(*args, **kwargs)
-        return cls._instances[cls]
+        # TODO: Use lock for thread safety
+        # TODO: Create instance only if not in _instances
+        # TODO: Return the single instance
+        pass
 
 
 class DatabaseConnection(metaclass=SingletonMeta):
     """Database connection using SingletonMeta."""
     
     def __init__(self, connection_string: str = "default"):
-        self.connection_string = connection_string
-        self.connected = False
+        # TODO: Initialize connection_string and connected flag
+        pass
     
     def connect(self):
-        self.connected = True
-        print(f"  Connected to {self.connection_string}")
+        # TODO: Set connected to True and print message
+        pass
     
     def disconnect(self):
-        self.connected = False
-        print(f"  Disconnected from {self.connection_string}")
+        # TODO: Set connected to False and print message
+        pass
 
 
 # =============================================================================
@@ -641,26 +560,26 @@ class DatabaseConnection(metaclass=SingletonMeta):
 
 class A:
     def method(self):
-        print("  A.method")
-        super().method() if hasattr(super(), 'method') else None
+        # TODO: Print "A.method" and call super() if available
+        pass
 
 
 class B(A):
     def method(self):
-        print("  B.method")
-        super().method()
+        # TODO: Print "B.method" and call super()
+        pass
 
 
 class C(A):
     def method(self):
-        print("  C.method")
-        super().method()
+        # TODO: Print "C.method" and call super()
+        pass
 
 
 class D(B, C):
     def method(self):
-        print("  D.method")
-        super().method()
+        # TODO: Print "D.method" and call super() to demonstrate MRO
+        pass
 
 
 # =============================================================================
