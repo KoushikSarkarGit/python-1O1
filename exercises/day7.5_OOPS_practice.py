@@ -141,22 +141,29 @@ class LibraryItem(ABC):
         self.__loan_period = 14
         self.__late_fee_per_day = 10.00
 
+    @property
+    def title(self):
+        return self.__title
+    
+    @property
+    def item_id(self):
+        return self.__item_id
+    @property
     @abstractmethod
     def get_loan_period(self) -> int:
         """Return loan period in days."""
-        return self.__loan_period
-    
+        pass
+    @property
     @abstractmethod
     def get_late_fee_per_day(self) -> float:
         """Return late fee per day."""
-        return self.get_late_fee_per_day
+        pass
     
     def is_available(self) -> bool:
-        # TODO: Return if item is not borrowed
-        return self.__is_borrowed
+        return not self.__is_borrowed
     
     def borrow(self):
-        # TODO: Mark as borrowed, raise exception if already borrowed
+
         if self.__is_borrowed:
             raise Exception("This Book is already borrowed by someone else")
         else:
@@ -170,55 +177,53 @@ class LibraryItem(ABC):
 class PhysicalBook(LibraryItem):
     """Physical book with specific loan period and fees."""
     
-    def __init__(self, title: str, item_id: str, author: str, shelf_location: str):
-        # TODO: Call super().__init__() and store author and shelf_location
-        pass
-    
+    def __init__(self, title: str, item_id: str, author: str, shelf_location: str = "ask librarian"):
+        super().__init__( title, item_id)
+        self.__author = author
+        self.__shelf_location = shelf_location
+
+
     def get_loan_period(self) -> int:
-        # TODO: Return 14 days for physical books
-        pass
+        return 14
     
     def get_late_fee_per_day(self) -> float:
-        # TODO: Return $0.50 per day
-        pass
+        return 0.50
 
 
 class DigitalBook(LibraryItem):
     """Digital book with different loan period and fees."""
     
     def __init__(self, title: str, item_id: str, file_size: str, download_url: str):
-        # TODO: Call super().__init__() and store file_size and download_url
-        pass
+        super().__init__( title, item_id)
+        self.__file_size = file_size
+        self.__download_url = download_url
     
     def get_loan_period(self) -> int:
-        # TODO: Return 7 days for digital books
-        pass
+        return 7
     
     def get_late_fee_per_day(self) -> float:
-        # TODO: Return 0.00 (no late fee for digital)
-        pass
+        return 0.00
 
 
 class AudioBook(LibraryItem):
     """Audio book with specific properties."""
     
     def __init__(self, title: str, item_id: str, duration_minutes: int, narrator: str):
-        # TODO: Call super().__init__() and store duration_minutes and narrator
-        pass
+        super().__init__( title, item_id)
+        self.__duration_minutes = duration_minutes
+        self.__narrator = narrator
     
     def get_loan_period(self) -> int:
-        # TODO: Return 21 days for audio books
-        pass
+        return 21
     
     def get_late_fee_per_day(self) -> float:
-        # TODO: Return $0.25 per day
-        pass
+        return 0.25
 
 
 def print_loan_info(item: LibraryItem):
     """Demonstrate duck typing - works with any LibraryItem."""
     # TODO: Print item title, loan period, and late fee
-    pass
+    return f"Title: {item.title} Id: {item.item_id}"
 
 
 # =============================================================================
