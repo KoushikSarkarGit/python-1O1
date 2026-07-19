@@ -182,10 +182,10 @@ class PhysicalBook(LibraryItem):
         self.__author = author
         self.__shelf_location = shelf_location
 
-
+    @property
     def get_loan_period(self) -> int:
         return 14
-    
+    @property
     def get_late_fee_per_day(self) -> float:
         return 0.50
 
@@ -197,10 +197,10 @@ class DigitalBook(LibraryItem):
         super().__init__( title, item_id)
         self.__file_size = file_size
         self.__download_url = download_url
-    
+    @property
     def get_loan_period(self) -> int:
         return 7
-    
+    @property
     def get_late_fee_per_day(self) -> float:
         return 0.00
 
@@ -212,10 +212,10 @@ class AudioBook(LibraryItem):
         super().__init__( title, item_id)
         self.__duration_minutes = duration_minutes
         self.__narrator = narrator
-    
+    @property
     def get_loan_period(self) -> int:
         return 21
-    
+    @property
     def get_late_fee_per_day(self) -> float:
         return 0.25
 
@@ -223,7 +223,7 @@ class AudioBook(LibraryItem):
 def print_loan_info(item: LibraryItem):
     """Demonstrate duck typing - works with any LibraryItem."""
     # TODO: Print item title, loan period, and late fee
-    return f"Title: {item.title} Id: {item.item_id}"
+    print (f"Title: {item.title} \nId: {item.item_id} \nLate Fee: ${item.get_late_fee_per_day:.2f}/day \nAvailable: {item.is_available()}")
 
 
 # =============================================================================
@@ -234,50 +234,119 @@ class SearchableMixin:
     """Mixin providing search functionality."""
     
     def search_by_title(self, query: str) -> bool:
-        # TODO: Return True if query is in title (case insensitive)
-        pass
+        return query.lower() in self.title.lower()
     
     def search_by_author(self, query: str) -> bool:
-        # TODO: Return True if query is in author (case insensitive)
-        # TODO: Handle case where author attribute doesn't exist
-        pass
+        author = getattr(self, 'author', None)
+        return query.lower() in author.lower() if author else False
+
 
 
 class SerializableMixin:
     """Mixin providing serialization functionality."""
     
     def to_dict(self) -> Dict[str, Any]:
-        # TODO: Return dictionary representation of object
-        pass
+        # Done: Return dictionary representation of object
+        limiteddict =  {"title": self.title,"item_id": self.item_id, "author": self.author}
+        # return self.__dict__  
+        return limiteddict
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]):
-        # TODO: Create instance from dictionary
-        pass
+        # Done: Create instance from dictionary
+        return cls(**data)
 
 
 class LoggableMixin:
     """Mixin providing logging functionality."""
     
     def log_action(self, action: str):
-        # TODO: Print log message with timestamp, class name, and action
-        pass
+        # Done: Print log message with timestamp, class name, and action
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        print(f"[{timestamp}] class name: {self.__class__.__name__} action: {action} ")
 
-
-class EnhancedLibraryItem(LibraryItem, SearchableMixin, SerializableMixin, LoggableMixin):
+# This follows Python's MRO (Method Resolution Order) conventions and is how frameworks like Django structure mixins.
+class EnhancedLibraryItem( SearchableMixin, SerializableMixin, LoggableMixin, LibraryItem,):
     """Library item with all mixins applied."""
     
     def __init__(self, title: str, item_id: str, author: str = "Unknown"):
-        # TODO: Call super().__init__() and set author
-        pass
+        # Done: Call super().__init__() and set author
+        super().__init__(title, item_id)
+        self.__author = author
+    
+    @property
+    def author(self):
+        return self.__author
     
     def get_loan_period(self) -> int:
-        # TODO: Return loan period
-        pass
+        # Done: Return loan period
+        return 14
     
     def get_late_fee_per_day(self) -> float:
-        # TODO: Return late fee
-        pass
+        # Done: Return late fee
+        return 1.00
+
+
+
+def test_enhanced_library_item():
+    print("=" * 60)
+    print("EnhancedLibraryItem Test Cases")
+    print("=" * 60)
+
+    # Create object
+    print("\n1. Creating object")
+    item = EnhancedLibraryItem(
+        title="Python Mastery",
+        item_id="B101",
+        author="Koushik Sarkar"
+    )
+    print("Created:", item.title, "|", item.item_id, "|", item.author)
+
+    # Search by title
+    print("\n2. Search by Title")
+    print("Search 'python':", item.search_by_title("python"))
+    print("Search 'java':", item.search_by_title("java"))
+
+    # Search by author
+    print("\n3. Search by Author")
+    print("Search 'koushik':", item.search_by_author("koushik"))
+    print("Search 'guido':", item.search_by_author("guido"))
+
+    # Borrow / Availability
+    print("\n4. Borrow and Availability")
+    print("Initially Available:", item.is_available())
+    item.borrow()
+    print("After Borrow:", item.is_available())
+    item.return_item()
+    print("After Return:", item.is_available())
+
+    # Serialization
+    print("\n5. Serialization")
+    data = item.to_dict()
+    print("Dictionary:")
+    print(data)
+
+    # Deserialization
+    print("\n6. Deserialization")
+    new_item = EnhancedLibraryItem.from_dict(data)
+    print("New Object:")
+    print("Title:", new_item.title)
+    print("Item ID:", new_item.item_id)
+    print("Author:", new_item.author)
+
+    # Logging
+    print("\n7. Logging")
+    item.log_action("Borrowed Book")
+    item.log_action("Returned Book")
+
+    # Loan information
+    print("\n8. Loan Information")
+    print("Loan Period:", item.get_loan_period(), "days")
+    print("Late Fee: $", item.get_late_fee_per_day(), "/day")
+
+    print("\n" + "=" * 60)
+    print("All tests completed successfully!")
+    print("=" * 60)
 
 
 # =============================================================================
@@ -294,53 +363,63 @@ class MagicBook:
         self.copies = copies
     
     def __str__(self):
-        # TODO: Return user-friendly string representation
-        pass
+        return f'MagicBook: "{self.title}" by {self.author}'
     
     def __repr__(self):
-        # TODO: Return developer string representation
-        pass
+        return f'MagicBook(title="{self.title}", author="{self.author}", isbn="{self.isbn}", copies={self.copies})'
     
     def __eq__(self, other):
-        # TODO: Compare by ISBN
-        pass
+        if not isinstance(other, MagicBook):
+            return NotImplemented
+        return self.isbn == other.isbn
     
     def __lt__(self, other):
-        # TODO: Compare by title for sorting
-        pass
+        if not isinstance(other, MagicBook):
+            return NotImplemented
+        return self.title < other.title
     
     def __hash__(self):
-        # TODO: Make book hashable by ISBN
-        pass
+        return hash(self.isbn)
     
     def __len__(self):
-        # TODO: Return number of copies
-        pass
+        return self.copies
     
     def __bool__(self):
-        # TODO: True if copies > 0
-        pass
+        return self.copies > 0
     
     def __contains__(self, substring):
-        # TODO: Check if substring is in author name
-        pass
+        return substring.lower() in self.author.lower()
     
     def __add__(self, other):
-        # TODO: Combine two books with same ISBN (add copies)
-        pass
+        if not isinstance(other, MagicBook):
+            return NotImplemented
+        if self.isbn != other.isbn:
+            raise ValueError("Cannot add books with different ISBNs")
+        return MagicBook(self.title, self.author, self.isbn, self.copies + other.copies)
     
     def __getitem__(self, index):
-        # TODO: Access copy info by index
-        pass
+        if index < 0 or index >= self.copies:
+            raise IndexError("Copy index out of range")
+        return {
+            'copy_number': index + 1,
+            'isbn': self.isbn,
+            'title': self.title,
+            'status': 'available'
+        }
     
     def __iter__(self):
-        # TODO: Iterate over copies
-        pass
+        for i in range(self.copies):
+            yield self.__getitem__(i)
     
     def __call__(self):
-        # TODO: Make book callable - returns next available copy info
-        pass
-
+        """Returns next available copy info."""
+        if self.copies > 0:
+            return {
+                'copy_number': 1,
+                'isbn': self.isbn,
+                'title': self.title
+            }
+        return None
 
 # =============================================================================
 # SECTION 5: CUSTOM ITERATOR
@@ -350,28 +429,28 @@ class BookCollection:
     """Custom iterator class for book collections."""
     
     def __init__(self, books: List[Any] = None):
-        # TODO: Initialize books list and index
-        pass
+        self._books = books if books is not None else []
+        self._index = 0
     
     def __iter__(self):
-        # TODO: Reset index and return self
-        pass
+        self._index = 0
+        return self
     
     def __next__(self):
-        # TODO: Return next book or raise StopIteration
-        pass
+        if self._index >= self._books.__len__():
+            return StopIteration
+        book = self._books[self._index]
+        self._index += 1
+        return book
     
     def __len__(self):
-        # TODO: Return number of books
-        pass
+        return len(self._books)
     
     def add_book(self, book):
-        # TODO: Add book to collection
-        pass
+        self._books.append(book)
     
     def reset(self):
-        # TODO: Reset iterator to beginning
-        pass
+        self._index = 0
 
 
 # =============================================================================
